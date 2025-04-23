@@ -1,109 +1,137 @@
+# Todo List Node.js App - CI/CD with GitHub Actions & Docker
 
-## Documentation
+* This project demonstrates how to set up a **CI/CD pipeline** using **GitHub Actions**, **Docker**, and **Docker Hub** for a simple Node.js Todo List app.
+* The app is containerized and deployed locally using Docker.
 
-[Documentation](https://linktodocumentation)
+# Project Overview
 
-📝 To-Do List nodeJs
+- **Frontend & Backend**: Node.js (Express)
+- **CI/CD Tool**: GitHub Actions
+- **Containerization**: Docker
+- **Registry**: Docker Hub
+- **Deployment**: Local system using `docker run`
 
-The to-do list application is a web-based application that allows users to create and manage a list of tasks. The user interface consists of a form to add new tasks, a list of all tasks, and controls to mark tasks as complete or delete them.
+# Folder Structure
 
-To create the application, Node.js is used to set up the server and handle the logic of the application. Express.js is used to create the routes for the application, allowing the user to interact with the application through a web browser. EJS is used to create the views for the application, allowing the user to see the list of tasks and the form to add new tasks. CSS is used to style the application, making it visually appealing and easy to use.
+Todo-List-nodejs/ ├── index.js ├── package.json ├── Dockerfile ├── .github/ │ └── workflows/ │ └── ci-cd.yml
 
-MongoDB and Mongoose are used to store the tasks in a database, allowing the user to add, delete, and update tasks as needed. Nodemon is used to monitor changes to the code and automatically restart the server, making it easy to develop and test the application.
+# Tools Used
 
-When the user adds a new task using the form, Node.js and Express.js handle the request and store the task in the database using Mongoose. When the user views the list of tasks, EJS displays the tasks from the database in a list on the web page. When the user marks a task as complete or deletes a task, Node.js and Express.js handle the request and update the database using Mongoose.
+- **GitHub** - Version control and project repository
+- **GitHub Actions** - CI/CD pipeline automation
+- **Docker** - Containerization of the Node.js app
+- **Docker Hub** - Registry to store and pull Docker images
+- **Node.js & Express** - Backend framework for the Todo app
 
-Overall, the todo list application using Node.js, Express.js, EJS, CSS, JavaScript, MongoDB, Mongoose, and Nodemon can be a great way to create a functional and interactive web application that allows users to manage their tasks online. With the right combination of technologies, it is possible to create an application that is both functional and aesthetically pleasing, making it easy for users to manage their tasks in a convenient and efficient way.
+# Step-by-Step Guide
 
-Technologies Used: NodeJS, ExpressJS, EJS, CSS, JavaScript, Nodemon, MongoDB, Mongoose.
-## Demo
+# Step 1: Clone the Repository
+  
+git clone https://github.com/asma-naaz/Todo-List-nodejs.git
+cd Todo-List-nodejs
 
-Under process...
-## Authors
+# Step 2: Setting up the Dockerfile
+Why: A Dockerfile defines the environment where the app will run. By using Docker, we ensure that the app runs consistently across different environments (development, testing, production).
 
-- [@AnkitVishwakarma](https://github.com/Ankit6098)
+** How: The Dockerfile includes the following steps:
+
+* FROM node:18-alpine: Starts with a lightweight Node.js base image.
+
+* WORKDIR /app: Sets the working directory for subsequent commands inside the container.
+
+* *COPY package.json ./**: Copies the package.json and package-lock.json files to the container.
+
+* RUN npm install: Installs the dependencies defined in the package.json.
+
+* COPY . .: Copies the entire project to the container.
+
+* EXPOSE 4000: Exposes port 4000 for the application to be accessed.
+
+* CMD ["node", "index.js"]: Starts the app using Node.js when the container runs.
+
+# Step 3: Setting up the GitHub Actions Workflow
+Why: GitHub Actions automates the process of building, testing, and deploying your app every time a change is made to the codebase. This creates a seamless CI/CD pipeline.
+
+How: Create a file .github/workflows/ci-cd.yml with the following content:
+
+yaml
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v2
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build Docker image
+      run: docker build -t asmanaaz025/todo-list-nodejs:latest .
+
+    - name: Push Docker image
+      run: docker push asmanaaz025/todo-list-nodejs:latest
+      
+# Explanation of the workflow:
+
+* on.push: The workflow runs whenever code is pushed to the master branch.
+
+* actions/checkout: Checks out the code from the repository.
+
+* docker/login-action: Logs into Docker Hub using the credentials stored in GitHub Secrets.
+
+* docker build: Builds the Docker image from the Dockerfile.
+
+* docker push: Pushes the image to Docker Hub under your account.
+
+* Important: Ensure you store your Docker Hub credentials (username & password) in GitHub Secrets under DOCKER_USERNAME and DOCKER_PASSWORD.
+
+# Step 4: Running the Docker Container Locally
+Why: Running the app in a Docker container allows you to test it in an isolated environment, replicating production conditions on your local machine.
+
+How: After the image is built and pushed, you can run the app locally with the following command:
+
+* docker run -p 4000:4000 asmanaaz025/todo-list-nodejs:latest
+This command:
+* Runs the container based on the todo-list-nodejs:latest image.
+* Maps the container's port 4000 to your machine's port 4000.
+
+You should see the following message in the terminal:
+
+Yupp! Server is running on port 4000
+Now, open your browser and visit:
+http://localhost:4000
+
+# Deliverables
+GitHub repository with CI/CD workflows for building, testing, and pushing the Docker image.
 
 
-## Features
 
-- Create, Update, and Delete Tasks: Enable users to create new tasks, update existing tasks (e.g., mark as completed, edit task details), and delete tasks they no longer need.
-- Task Categories provides Implement the ability for users to categorize their tasks into different categories (e.g., work, personal, shopping) or assign labels/tags to tasks for better organization and filtering.
-- MongoDb to store your the user data
-## Run Locally
+Docker image pushed to Docker Hub: Link to Docker Hub
 
-Clone the project
+https://hub.docker.com/repository/docker/asmanaaz025/todo-list-nodejs/general
 
-```bash
-  git clone https://github.com/Ankit6098/Todos-nodejs
-```
+GitHub Actions Workflow Results: View your build and push logs under the "Actions" tab on GitHub.
 
-Go to the project directory and open index.html file
-
-```bash
-  cd Todos-nodejs
-```
-
-Install the packages
-
-```bash
-  npm install / npm i
-```
-
-Start the Server
-
-```bash
-    npm start / nodemon start
-```
-## Acknowledgements
-
- - [nodemon](https://nodemon.io/)
- - [mongoDb](https://www.mongodb.com/)
- - [mongoose](https://mongoosejs.com/)
+![Screenshot 2025-04-23 202407](https://github.com/user-attachments/assets/e7ec1732-fb14-414d-b87f-42047f84bc36)
 
 
-## Screenshots
+App running locally: Accessible via http://localhost:4000
 
-![225232515-4c100b6b-52e4-40f8-a6d4-85e30dc2f5e7](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/487f548f-7ca6-4183-9443-c88c9f79c3f0)
-![225232960-da554f1f-ba4a-41f8-9856-edaebe339d76](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/25515d2e-1d72-498d-8044-59a01c6b9127)
-![225238829-05433362-5b16-454c-92d5-5e536fe6912e](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/316d15ca-1fe8-4581-80b1-fc316340bba6)
-![225239140-226f8eae-d8b8-4055-8a68-d85d523c2422](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/44a0c418-449e-446f-8a8e-3c4e14fca8bf)
-![225239221-caf86f3d-ef17-4d18-80a6-c72123ff5444](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/2ee90ab0-95d4-44f4-80ac-b17b088ac1ce)
-![225239406-98b7ba7d-df97-4d27-bb66-596a32187d87](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/960ff353-1ce9-4ef8-94e4-10af09184fd2)
-![225239841-4b5d77f0-4a54-4339-b6b3-b6a1be6776b5](https://github.com/Ankit6098/Todos-nodejs/assets/92246613/f5ffc3b8-480f-4d11-9a0b-c469e3c17e8e)
+![Screenshot 2025-04-23 202328](https://github.com/user-attachments/assets/f6c17868-fe4f-4b15-bc13-d8f6736a045f)
 
 
-## Related
-
-Here are some other projects
-
-[Alarm CLock - javascript](https://github.com/Ankit6098/Todos-nodejs)\
-[IMDb Clone - javascript](https://github.com/Ankit6098/IMDb-Clone)
-
-
-## 🚀 About Me
-I'm a full stack developer...
-
-
-# Hi, I'm Ankit! 👋
-
-I'm a full stack developer 😎 ... Love to Develop Classic Unique fascinating and Eye Catching UI and Love to Create Projects and Building logics.
-## 🔗 Links
-[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ankithub.me/Resume/)
-
-[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColorwhite=)](https://www.linkedin.com/in/ankit-vishwakarma-6531221b0/)
-
-
-## Other Common Github Profile Sections
-🧠 I'm currently learning FullStack Developer Course from Coding Ninjas
-
-📫 How to reach me ankitvis609@gmail.com
-
-
-## 🛠 Skills
-React, Java, Javascript, HTML, CSS, Nodejs, ExpressJs, Mongodb, Mongoose...
-
-
-## Feedback
-
-If you have any feedback, please reach out to us at ankitvis609@gmail.com
-
+Asma Naaz
+AWS DevOps Intern | Learning CI/CD | Docker & GitHub Actions
+📍 Hyderabad
+🌐 GitHub: @asma-naaz
